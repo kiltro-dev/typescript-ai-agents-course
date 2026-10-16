@@ -56,6 +56,8 @@ import { Prompt } from './Prompt';
 export interface LLMConfig {
   /** OpenAI API key (defaults to OPENAI_API_KEY env var) */
   apiKey?: string;
+  /** Base URL for the API (defaults to BASE_URL env var, or OpenAI's default) */
+  baseURL?: string;
   /** Model to use (defaults to OPENAI_MODEL env var or "gpt-5-nano") */
   model?: string;
   /** Maximum tokens in response */
@@ -86,7 +88,8 @@ export class LLM {
       );
     }
 
-    this.client = new OpenAI({ apiKey });
+    const baseURL = config.baseURL ?? process.env.BASE_URL;
+    this.client = new OpenAI({ apiKey, baseURL });
     this.model = config.model ?? process.env.OPENAI_MODEL ?? 'gpt-5-nano';
     this.maxTokens = config.maxTokens ?? 4096;
     this.debug = config.debug ?? process.env.DEBUG === 'true';
